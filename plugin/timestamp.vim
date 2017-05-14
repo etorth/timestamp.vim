@@ -120,25 +120,26 @@ endfunction
 
 " {{{1 timestamp(): Function that does the timestamping
 function s:timestamp()
-
-    " by anhong
-    " only to this if current buffer is modified
-    " annoying issue is when doing undo, the cursor will jump back to the stamp line
-    if &modified == 0
-        return
-    endif
-
+    " never do time stamp if disabled
     if exists('b:timestamp_disabled') && b:timestamp_disabled
         return
     endif
 
     " If running for the first time, initialise script variables.
+    " should be done before check register ``modified"
     if !exists('s:timestamp_regexp')
         call s:initialise()
 
         " Free up memory.
         delfunction s:initialise
         delfunction s:getValue
+    endif
+
+    " by anhong
+    " only to this if current buffer is modified
+    " annoying issue is when doing undo, the cursor will jump back to the stamp line
+    if &modified == 0
+        return
     endif
 
     " Get buffer local patterns -- overriding global ones.
